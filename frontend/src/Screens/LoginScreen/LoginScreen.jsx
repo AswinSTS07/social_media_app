@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./LoginScreen.css";
+import axios from "axios";
+import { BASE_URL } from "../../constant";
 
 function LoginScreen() {
   const [formData, setFormData] = useState({
@@ -32,14 +34,16 @@ function LoginScreen() {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Form submitted successfully");
-      // Submit the form
+      try {
+        const res = await axios.post(`${BASE_URL}/api/v1/user/login`, formData);
+        console.log("RES------------", res ? res : "no res");
+      } catch (error) {}
     }
   };
 

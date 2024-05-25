@@ -17,6 +17,7 @@ db.connect();
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 // Routes configurations
 app.use("/api/v1/user", userRouter);
