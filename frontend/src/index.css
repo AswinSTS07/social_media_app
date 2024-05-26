@@ -125,3 +125,48 @@ a{
 .upload-button:hover {
   background-color: #0056b3;
 }
+
+.medium{
+  font-size: 16px;
+}
+
+/* Add this to your CSS file */
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.user-item {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+.thumbnail{
+  width: 35px;
+  height:35px;
+  border-radius: 50%;
+}
+.user-item p {
+  margin: 0;
+}
+
+.user-item:hover {
+  background-color: #f1f1f1;
+}
+
+.no-matched-users {
+  padding: 10px;
+  text-align: center;
+  color: #777;
+}

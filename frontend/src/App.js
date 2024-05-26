@@ -6,6 +6,7 @@ import ProfileScreen from "./Screens/ProfileScreen/ProfileScreen";
 import LoginScreen from "./Screens/LoginScreen/LoginScreen";
 import RegisterScreen from "./Screens/RegisterScreen/RegisterScreen";
 import EditProfile from "./Screens/EditProfile/EditProfile";
+import UserProfile from "./Screens/UserProfile/UserProfile";
 
 const user = {
   name: "John Doe",
@@ -45,6 +46,7 @@ function App() {
               path="/edit-profile"
               element={<EditProfile user={userInfo} />}
             />
+            <Route path="/user/:id" element={<UserProfile />} />
           </Routes>
         </div>
       </div>

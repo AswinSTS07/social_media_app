@@ -71,4 +71,13 @@ module.exports = {
       }
     });
   },
+  searchUser: (query) => {
+    return new Promise(async (resolve, reject) => {
+      const users = await User.find({
+        username: { $regex: query?.username, $options: "i" },
+      });
+      successResponse.data = users;
+      resolve(successResponse);
+    });
+  },
 };

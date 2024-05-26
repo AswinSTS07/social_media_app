@@ -3,6 +3,7 @@ const {
   register,
   login,
   getAllPost,
+  searchUser,
 } = require("../controllers/userController");
 const Post = require("../models/postModel");
 const { post } = require("../data");
@@ -63,6 +64,14 @@ userRouter.post("/upload-cover-photo/:id", async (req, res) => {
     console.error("Error ", err);
     res.status(500).json({ err: "Something went wrong" });
   }
+});
+
+userRouter.get("/search", async (req, res) => {
+  let query = req.query;
+
+  await searchUser(query).then((result) => {
+    res.send(result);
+  });
 });
 
 module.exports = userRouter;

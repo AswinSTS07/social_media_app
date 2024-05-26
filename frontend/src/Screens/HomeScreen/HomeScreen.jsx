@@ -53,6 +53,7 @@ function HomeScreen() {
         )}
       </div>
       <div className="col-md-3">
+        <h4 className="medium">Recommended for you</h4>
         <div className="container-fluid card">
           <RightCard />
         </div>
