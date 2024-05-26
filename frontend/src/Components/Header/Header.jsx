@@ -6,6 +6,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { TextField, IconButton } from "@mui/material";
 import axios from "axios";
 import { BASE_URL } from "../../constant";
+import GroupIcon from '@mui/icons-material/Group';
 
 const User = ({ user }) => (
   <div className="user-item">
@@ -89,6 +90,9 @@ function Header({ uid }) {
             </div>
           </form>
           <div className="d-flex">
+          <div className="mx-3">
+              <GroupIcon />
+            </div>
             <div className="mx-3">
               <NotificationsIcon />
             </div>

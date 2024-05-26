@@ -80,4 +80,16 @@ module.exports = {
       resolve(successResponse);
     });
   },
+  getUserDetails: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let user = await User.findOne({ _id: userId });
+      if (user) {
+        successResponse.data = user;
+        resolve(successResponse);
+      } else {
+        errorResponse.message = "User not found";
+        resolve(errorResponse);
+      }
+    });
+  },
 };

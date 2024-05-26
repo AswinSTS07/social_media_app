@@ -43,7 +43,7 @@ function App() {
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/register" element={<RegisterScreen />} />
             <Route
-              path="/edit-profile"
+              path="/edit-profile/:id"
               element={<EditProfile user={userInfo} />}
             />
             <Route path="/user/:id" element={<UserProfile />} />

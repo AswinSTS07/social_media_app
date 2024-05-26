@@ -8,6 +8,7 @@ import axios from "axios";
 import { BASE_URL } from "../../constant";
 import Swal from "sweetalert2";
 import LinearWithValueLabel from "../../Components/LinearProgressWithLabel/LinearProgressWithLabel";
+import EditIcon from "@mui/icons-material/Edit";
 
 const user = {
   name: "John Doe",
@@ -39,6 +40,7 @@ function ProfileScreen() {
   const [previewSource, setPreviewSource] = useState("");
   const [caption, setCaption] = useState("");
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
@@ -90,6 +92,17 @@ function ProfileScreen() {
   const [postLoading, setPostLoading] = useState(false);
 
   useEffect(() => {
+    const fetchUser = async () => {
+      let user = JSON.parse(localStorage.getItem("userInfo"));
+      let res = await axios.get(BASE_URL + `/api/v1/user/user/${user?.id}`);
+      if (res && res.data) {
+        setUser(res?.data?.data);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
     try {
       const fetchPost = async () => {
         setLoading(true);
@@ -109,21 +122,28 @@ function ProfileScreen() {
       <div className="row">
         <div>
           <div className="cover-photo">
-            <img src={user.coverPhoto} alt="Cover" />
+            <img src={user?.coverImage} alt="Cover" />
           </div>
           <div className="profile-info">
             <div className="avatar">
-              <img src={user.avatar} alt="Avatar" />
+              <img src={user?.profileImage} alt="Avatar" />
             </div>
             <div className="details">
-              <h1 className="name">{user.name}</h1>
-              <p className="bio">{user.bio}</p>
+              <h1 className="name">{user?.username}</h1>
+              <p className="bio">{user?.bio}</p>
               <div className="stats">
-                <span>{user.following} Following</span>
-                <span>{user.followers} Followers</span>
-                <span>{user.posts.length} Posts</span>
+                <span>{user?.following} Following</span>
+                <span>{user?.followers} Followers</span>
+                <span>{post?.length} Posts</span>
               </div>
             </div>
+            <EditIcon
+              onClick={() =>
+                (window.location.href = `/edit-profile/${user?._id}`)
+              }
+              mx={2}
+              style={{ left: "-40px", position: "relative" }}
+            />
             <div>
               <button
                 className="btn btn-success"

@@ -4,10 +4,12 @@ const {
   login,
   getAllPost,
   searchUser,
+  getUserDetails,
 } = require("../controllers/userController");
 const Post = require("../models/postModel");
 const { post } = require("../data");
 const { cloudinary } = require("../utils/cloudinary");
+const User = require("../models/userModel");
 
 const userRouter = express.Router();
 
@@ -35,6 +37,26 @@ userRouter.get("/posts/:id", async (req, res) => {
     res.send(result);
   });
 });
+
+const uploadImage = async (src) => {
+  try {
+    const fileStr = src;
+    if (src && fileStr) {
+      const uploadResponse = await cloudinary.uploader.upload(fileStr, {
+        upload_preset: "cloudinary_react",
+        public_id: Date.now(),
+      });
+      if (uploadResponse && uploadResponse.url) {
+        return uploadResponse.url;
+      } else {
+        throw new Error("Failed to upload image");
+      }
+    }
+  } catch (err) {
+    console.error("Error", err);
+    throw err;
+  }
+};
 
 userRouter.post("/upload-cover-photo/:id", async (req, res) => {
   try {
@@ -72,6 +94,35 @@ userRouter.get("/search", async (req, res) => {
   await searchUser(query).then((result) => {
     res.send(result);
   });
+});
+
+userRouter.get("/user/:id", async (req, res) => {
+  await getUserDetails(req.params.id).then((result) => {
+    res.send(result);
+  });
+});
+
+userRouter.post("/edit-profile/:id", async (req, res) => {
+  try {
+    const coverSrc = await uploadImage(req.body?.coverPhoto);
+    const profileSrc = await uploadImage(req.body?.profile);
+    delete req.body.coverPhoto;
+    delete req.body.profile;
+
+    req.body.profileImage = profileSrc;
+    req.body.coverImage = coverSrc;
+
+    const result = await User.updateOne(
+      { _id: req.params.id },
+      { $set: req.body }
+    );
+
+    res.status(200).json({ message: "Profile updated successfully", coverSrc });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to update profile", error: err.message });
+  }
 });
 
 module.exports = userRouter;
