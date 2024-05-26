@@ -2,7 +2,7 @@ import React from "react";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MarkChatUnreadIcon from "@mui/icons-material/MarkChatUnread";
-function Header() {
+function Header({ uid }) {
   return (
     <div>
       <nav class="navbar bg-body-tertiary">
@@ -19,7 +19,7 @@ function Header() {
               <MarkChatUnreadIcon />
             </div>
             <div>
-              <a href={`/profile/1`}>
+              <a href={`/my-profile/${uid}`}>
                 <AccountCircleIcon />
               </a>
             </div>

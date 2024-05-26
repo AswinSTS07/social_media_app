@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import "./LoginScreen.css";
 import axios from "axios";
 import { BASE_URL } from "../../constant";
+import Swal from "sweetalert2";
 
 function LoginScreen() {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -41,8 +43,28 @@ function LoginScreen() {
 
     if (Object.keys(validationErrors).length === 0) {
       try {
+        setLoading(true);
         const res = await axios.post(`${BASE_URL}/api/v1/user/login`, formData);
-        console.log("RES------------", res ? res : "no res");
+        setLoading(false);
+        if (res && res.status == 200) {
+          Swal.fire({
+            title: "Success!",
+            text: "Account created successfully!",
+            icon: "success",
+          });
+
+          localStorage.setItem(
+            "userInfo",
+            JSON.stringify({
+              username: res?.data?.data?.username,
+              id: res?.data?.data?._id,
+              profile: res?.data?.data?.profileImage,
+              coverImage: res?.data?.data?.coverImage,
+              private: res?.data?.data?.private,
+            })
+          );
+          window.location.href = "/";
+        }
       } catch (error) {}
     }
   };
@@ -93,8 +115,12 @@ function LoginScreen() {
                   <div className="invalid-feedback">{errors.password}</div>
                 )}
               </div>
-              <button type="submit" className="btn btn-primary mt-4 w-100 p-2">
-                Login
+              <button
+                type="submit"
+                className="btn btn-primary mt-4 w-100 p-2"
+                disabled={loading}
+              >
+                {loading ? <>Please wait...</> : <>Login</>}
               </button>
               <div
                 className="mt-3"

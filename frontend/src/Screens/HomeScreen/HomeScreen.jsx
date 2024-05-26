@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import LeftCard from "../../Components/LeftCard/BasicList";
 import RightCard from "../../Components/RightCard/RightCard";
 import Post from "../../Components/Post/Post";
+import axios from "axios";
+import { BASE_URL } from "../../constant";
 
 const user = {
   name: "John Doe",
@@ -9,6 +11,24 @@ const user = {
 };
 
 function HomeScreen() {
+  const [post, setPost] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      const fetchPost = async () => {
+        setLoading(true);
+        let user = JSON.parse(localStorage.getItem("userInfo"));
+        let res = await axios.get(BASE_URL + `/api/v1/user/posts/${user?.id}`);
+        setPost(res?.data?.data);
+        setLoading(false);
+      };
+      fetchPost();
+    } catch (error) {
+      console.log("Error while fetching post : ", error);
+    }
+  }, []);
+
   return (
     <div className="row mt-5">
       <div className="col-md-3">
@@ -17,30 +37,20 @@ function HomeScreen() {
         </div>
       </div>
       <div className="col-md-6 scrollable-column">
-        <Post
-          user={user}
-          time="2 hrs ago"
-          content="This is a sample post content. It's a beautiful day!"
-          image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOw1jOBmA-ZYJ75YpXWTe-GjcRBk4RljuIefCdcqNQBQ&s"
-        />
-        <Post
-          user={user}
-          time="2 hrs ago"
-          content="This is a sample post content. It's a beautiful day!"
-          image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOw1jOBmA-ZYJ75YpXWTe-GjcRBk4RljuIefCdcqNQBQ&s"
-        />
-        <Post
-          user={user}
-          time="2 hrs ago"
-          content="This is a sample post content. It's a beautiful day!"
-          image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOw1jOBmA-ZYJ75YpXWTe-GjcRBk4RljuIefCdcqNQBQ&s"
-        />
-        <Post
-          user={user}
-          time="2 hrs ago"
-          content="This is a sample post content. It's a beautiful day!"
-          image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOw1jOBmA-ZYJ75YpXWTe-GjcRBk4RljuIefCdcqNQBQ&s"
-        />
+        {loading ? (
+          <>Loading....</>
+        ) : post.length > 0 ? (
+          post.map((p, index) => (
+            <Post
+              user={p}
+              time="2 hrs ago"
+              content="This is a sample post content. It's a beautiful day!"
+              image={p?.src}
+            />
+          ))
+        ) : (
+          <>No post available</>
+        )}
       </div>
       <div className="col-md-3">
         <div className="container-fluid card">
