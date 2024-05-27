@@ -8,35 +8,20 @@ import { BASE_URL } from "../../constant";
 import { useParams } from "react-router-dom";
 import Post from "../../Components/Post/Post";
 
-const user = {
-  name: "John Doe",
-  avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  coverPhoto:
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsrggrkJsAFC4nYdnLwWRixXAR4-thhAF-kAKeMK6B9w&s",
-  bio: "This is a short bio about John Doe.",
-  followers: 123,
-  following: 343,
-  posts: [
-    {
-      id: 1,
-      content: "This is a sample post content. It's a beautiful day!",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOw1jOBmA-ZYJ75YpXWTe-GjcRBk4RljuIefCdcqNQBQ&s",
-      time: "2 hrs ago",
-    },
-    {
-      id: 2,
-      content: "Enjoying a lovely evening with friends.",
-      image: "https://via.placeholder.com/600x400",
-      time: "4 hrs ago",
-    },
-  ],
-};
-
 function UserProfile() {
   const { id } = useParams();
   const [post, setPost] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      let res = await axios.get(BASE_URL + `/api/v1/user/user/${id}`);
+      if (res && res.data) {
+        setUser(res?.data?.data);
+      }
+    };
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     try {
@@ -58,19 +43,19 @@ function UserProfile() {
         <div className="row">
           <div>
             <div className="cover-photo">
-              <img src={user.coverPhoto} alt="Cover" />
+              <img src={user?.coverImage} alt="Cover" />
             </div>
             <div className="profile-info">
               <div className="avatar">
-                <img src={user.avatar} alt="Avatar" />
+                <img src={user?.profileImage} alt="Avatar" />
               </div>
               <div className="details">
-                <h1 className="name">{user.name}</h1>
-                <p className="bio">{user.bio}</p>
+                <h1 className="name">{user?.username}</h1>
+                <p className="bio">{user?.bio}</p>
                 <div className="stats">
-                  <span>{user.following} Following</span>
-                  <span>{user.followers} Followers</span>
-                  <span>{user.posts.length} Posts</span>
+                  <span>{user?.following} Following</span>
+                  <span>{user?.followers} Followers</span>
+                  <span>{post?.length} Posts</span>
                 </div>
               </div>
             </div>
