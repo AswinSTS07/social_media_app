@@ -150,4 +150,17 @@ module.exports = {
       });
     });
   },
+  unFollow: (fromId, toId) => {
+    return new Promise(async (resolve, reject) => {
+      let user = await User.findOne({ _id: fromId });
+      let followingCount = user?.following;
+      await Follow.updateOne(
+        { userId: fromId },
+        { $pull: { following: toId } },
+        { new: true, useFindAndModify: false }
+      );
+      await User.updateOne({ _id: fromId }, { following: followingCount - 1 });
+      resolve(true);
+    });
+  },
 };

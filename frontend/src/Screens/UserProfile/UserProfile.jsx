@@ -14,6 +14,7 @@ function UserProfile() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [followed, setFollowed] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     const checkFollowed = async () => {
@@ -24,7 +25,6 @@ function UserProfile() {
         toId: id,
       });
       if (res) {
-        console.log("res---------", res);
         if (res?.data == false) {
           setFollowed(false);
         } else {
@@ -62,6 +62,7 @@ function UserProfile() {
 
   const requestToFollow = async () => {
     try {
+      setProcessing(true);
       let current_user = JSON.parse(localStorage.getItem("userInfo"));
       let res = await axios.post(
         BASE_URL + `/api/v1/user/send-follow-request`,
@@ -72,6 +73,24 @@ function UserProfile() {
       );
       if (res && res.data == true) {
         setFollowed(true);
+        setProcessing(false);
+      }
+    } catch (error) {
+      console.log("Error while sending follow request : ", error);
+    }
+  };
+
+  const unFollow = async () => {
+    try {
+      setProcessing(true);
+      let current_user = JSON.parse(localStorage.getItem("userInfo"));
+      let res = await axios.post(BASE_URL + `/api/v1/user/unfollow`, {
+        fromId: current_user?.id,
+        toId: id,
+      });
+      if (res && res.data == true) {
+        setFollowed(false);
+        setProcessing(false);
       }
     } catch (error) {
       console.log("Error while sending follow request : ", error);
@@ -102,15 +121,17 @@ function UserProfile() {
                   <button
                     className="mt-4 btn btn-primary"
                     onClick={requestToFollow}
+                    disabled={processing}
                   >
-                    Follow
+                    {processing ? <>Please wait..</> : <>Follow</>}
                   </button>
                 ) : (
                   <button
                     className="mt-4 btn btn-secondary"
-                    // onClick={requestToFollow}
+                    onClick={unFollow}
+                    disabled={processing}
                   >
-                    Unfollow
+                    {processing ? <>Please wait..</> : <>Unfollow</>}
                   </button>
                 )}
               </div>

@@ -7,6 +7,7 @@ const {
   getUserDetails,
   checkFollowed,
   sendFollowRequest,
+  unFollow,
 } = require("../controllers/userController");
 const Post = require("../models/postModel");
 const { post } = require("../data");
@@ -135,6 +136,12 @@ userRouter.post("/check-followed", async (req, res) => {
 
 userRouter.post("/send-follow-request", async (req, res) => {
   await sendFollowRequest(req.body.fromId, req.body.toId).then((result) => {
+    res.send(result);
+  });
+});
+
+userRouter.post("/unfollow", async (req, res) => {
+  await unFollow(req.body.fromId, req.body.toId).then((result) => {
     res.send(result);
   });
 });
