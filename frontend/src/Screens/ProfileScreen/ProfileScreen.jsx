@@ -9,6 +9,7 @@ import { BASE_URL } from "../../constant";
 import Swal from "sweetalert2";
 import LinearWithValueLabel from "../../Components/LinearProgressWithLabel/LinearProgressWithLabel";
 import EditIcon from "@mui/icons-material/Edit";
+import { useParams } from "react-router-dom";
 
 const user = {
   name: "John Doe",
@@ -36,11 +37,13 @@ const user = {
 };
 
 function ProfileScreen() {
+  const { id } = useParams();
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewSource, setPreviewSource] = useState("");
   const [caption, setCaption] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [following, setFollowing] = useState([]);
 
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
@@ -115,6 +118,17 @@ function ProfileScreen() {
     } catch (error) {
       console.log("Error while fetching post : ", error);
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchFollowing = async () => {
+      let res = await axios.get(BASE_URL + `/api/v1/user/following/${id}`);
+
+      if (res && res.data) {
+        setFollowing(res?.data?.data);
+      }
+    };
+    fetchFollowing();
   }, []);
 
   return (
@@ -256,11 +270,13 @@ function ProfileScreen() {
                 </div>
               </div>
             </TabPanel>
+            <TabPanel>followers</TabPanel>
             <TabPanel>
-              <RightCard />
-            </TabPanel>
-            <TabPanel>
-              <RightCard />
+              {following?.length > 0 ? (
+                following.map((fol, index) => <RightCard data={fol} />)
+              ) : (
+                <p>No following </p>
+              )}
             </TabPanel>
           </Tabs>
         </div>

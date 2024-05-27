@@ -163,4 +163,22 @@ module.exports = {
       resolve(true);
     });
   },
+  getFollowing: (id) => {
+    return new Promise(async (resolve, reject) => {
+      const followDoc = await Follow.findOne({ userId: id });
+      if (followDoc) {
+        const followingIds = followDoc.following;
+
+        const users = await User.find(
+          { _id: { $in: followingIds } },
+          "_id profileImage username bio"
+        );
+        successResponse.data = users;
+        resolve(successResponse);
+      } else {
+        console.log(`Follow document for userId ${userId} not found.`);
+        return [];
+      }
+    });
+  },
 };
