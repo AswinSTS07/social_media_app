@@ -5,6 +5,8 @@ const {
   getAllPost,
   searchUser,
   getUserDetails,
+  checkFollowed,
+  sendFollowRequest,
 } = require("../controllers/userController");
 const Post = require("../models/postModel");
 const { post } = require("../data");
@@ -123,6 +125,18 @@ userRouter.post("/edit-profile/:id", async (req, res) => {
       .status(500)
       .json({ message: "Failed to update profile", error: err.message });
   }
+});
+
+userRouter.post("/check-followed", async (req, res) => {
+  await checkFollowed(req.body.fromId, req.body.toId).then((result) => {
+    res.send(result);
+  });
+});
+
+userRouter.post("/send-follow-request", async (req, res) => {
+  await sendFollowRequest(req.body.fromId, req.body.toId).then((result) => {
+    res.send(result);
+  });
 });
 
 module.exports = userRouter;

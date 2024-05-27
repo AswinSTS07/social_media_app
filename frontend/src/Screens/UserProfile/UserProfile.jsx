@@ -13,6 +13,28 @@ function UserProfile() {
   const [post, setPost] = useState([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [followed, setFollowed] = useState(false);
+
+  useEffect(() => {
+    const checkFollowed = async () => {
+      let user = JSON.parse(localStorage.getItem("userInfo"));
+
+      let res = await axios.post(BASE_URL + `/api/v1/user/check-followed`, {
+        fromId: user?.id,
+        toId: id,
+      });
+      if (res) {
+        console.log("res---------", res);
+        if (res?.data == false) {
+          setFollowed(false);
+        } else {
+          setFollowed(true);
+        }
+      }
+    };
+    checkFollowed();
+  }, []);
+
   useEffect(() => {
     const fetchUser = async () => {
       let res = await axios.get(BASE_URL + `/api/v1/user/user/${id}`);
@@ -37,6 +59,25 @@ function UserProfile() {
       console.log("Error while fetching post : ", error);
     }
   }, []);
+
+  const requestToFollow = async () => {
+    try {
+      let current_user = JSON.parse(localStorage.getItem("userInfo"));
+      let res = await axios.post(
+        BASE_URL + `/api/v1/user/send-follow-request`,
+        {
+          fromId: current_user?.id,
+          toId: id,
+        }
+      );
+      if (res && res.data == true) {
+        setFollowed(true);
+      }
+    } catch (error) {
+      console.log("Error while sending follow request : ", error);
+    }
+  };
+
   return (
     <div>
       <div className="container mt-2">
@@ -57,6 +98,21 @@ function UserProfile() {
                   <span>{user?.followers} Followers</span>
                   <span>{post?.length} Posts</span>
                 </div>
+                {!followed ? (
+                  <button
+                    className="mt-4 btn btn-primary"
+                    onClick={requestToFollow}
+                  >
+                    Follow
+                  </button>
+                ) : (
+                  <button
+                    className="mt-4 btn btn-secondary"
+                    // onClick={requestToFollow}
+                  >
+                    Unfollow
+                  </button>
+                )}
               </div>
             </div>
           </div>

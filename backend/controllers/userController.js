@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { successResponse, errorResponse } = require("../constants");
 const Post = require("../models/postModel");
+const Follow = require("../models/followingModel");
 const JWT_SECRET = process.env.JWT_SECRET || "something_secret";
 
 module.exports = {
@@ -90,6 +91,63 @@ module.exports = {
         errorResponse.message = "User not found";
         resolve(errorResponse);
       }
+    });
+  },
+  checkFollowed: (fromId, toId) => {
+    return new Promise(async (resolve, reject) => {
+      User.findOne({ _id: fromId }).then(async (fromUser) => {
+        let followingCount = fromUser?.following;
+
+        if (followingCount == 0) {
+          resolve(false);
+        } else {
+          let check = await Follow.findOne({ userId: fromId });
+
+          if (check) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
+  },
+  sendFollowRequest: (fromId, toId) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id: fromId }).then(async (fromUser) => {
+        let followingCount = fromUser?.following;
+        let private = false;
+        let toUser = await User.findOne({ _id: toId }, { private: 1 });
+        private = toUser?.private;
+
+        if (private) {
+          // Send notification to user
+        } else {
+          let userFollowDetails = await Follow.findOne({ userId: fromId });
+
+          if (followingCount == 0 || userFollowDetails == null) {
+            let new_data = {
+              userId: fromId,
+              following: [toId],
+            };
+            await Follow.create(new_data);
+            await User.updateOne(
+              { _id: fromId },
+              { $set: { following: followingCount + 1 } }
+            );
+            resolve(true);
+          } else {
+            const result = await Follow.updateOne(
+              { userId: fromId },
+              { $push: { following: toId } },
+              { new: true, useFindAndModify: false }
+            );
+            if (result?.modifiedCount == 1) {
+              resolve(true);
+            }
+          }
+        }
+      });
     });
   },
 };
