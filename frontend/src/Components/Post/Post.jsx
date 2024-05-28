@@ -8,12 +8,14 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import axios from "axios";
 import { BASE_URL } from "../../constant";
+import CommentModal from "../CommentModal/CommentModal";
 
 function Post({ user, time, content, image, avatar, name, postId }) {
   const [likes, setLikes] = useState(user.likes);
   const [comments, setComments] = useState(user.comment);
   const [commentText, setCommentText] = useState("");
   const [liked, setLiked] = useState(user.likes.includes(user?.userId));
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const handleLike = async () => {
     try {
@@ -29,8 +31,9 @@ function Post({ user, time, content, image, avatar, name, postId }) {
 
   const handleComment = async () => {
     try {
+      let currentUser = JSON.parse(localStorage.getItem("userInfo"));
       let res = await axios.post(`${BASE_URL}/api/v1/user/${postId}/comment`, {
-        userId: user?.userId,
+        userId: currentUser?.id,
         text: commentText,
       });
       setComments(res.data.comments);
@@ -38,6 +41,24 @@ function Post({ user, time, content, image, avatar, name, postId }) {
       toast.success("Your comment posted successfully!");
     } catch (error) {
       console.log("Error while commenting on post: ", error);
+    }
+  };
+
+  const openModal = () => {
+    fetchComments();
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const fetchComments = async () => {
+    try {
+      let res = await axios.get(`${BASE_URL}/api/v1/user/${postId}/comments`);
+      setComments(res.data);
+    } catch (error) {
+      console.log("Error while fetching comments: ", error);
     }
   };
 
@@ -66,9 +87,9 @@ function Post({ user, time, content, image, avatar, name, postId }) {
           <span className="like-count">{likes.length}</span>
         </button>
 
-        <button className="action-button">
+        <button className="action-button" onClick={openModal}>
           <ChatBubbleOutlineIcon />
-          <span className="like-count">{comments.length}</span>
+          <span className="like-count">{comments?.length}</span>
         </button>
         <button className="action-button">
           <BookmarkBorderIcon />
@@ -84,13 +105,12 @@ function Post({ user, time, content, image, avatar, name, postId }) {
         <button onClick={handleComment} className="mt-2">
           Comment
         </button>
-        {comments?.map((comment, index) => (
-          <div key={index} className="comment">
-            <span>{comment.userId}</span>
-            <p>{comment.text}</p>
-          </div>
-        ))}
       </div>
+      <CommentModal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        comments={comments}
+      />
       <ToastContainer />
     </div>
   );

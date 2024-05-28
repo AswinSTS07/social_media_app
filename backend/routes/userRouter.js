@@ -172,14 +172,34 @@ userRouter.put("/:postId/like", async (req, res) => {
 userRouter.post("/:postId/comment", async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
+    const user = await User.findById(req.body.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     const newComment = {
       userId: req.body.userId,
       text: req.body.text,
+      username: user.username,
+      profileImage: user.profileImage,
     };
+    console.log("new comment : ", newComment);
     post.comment.push(newComment);
     await post.save();
     res.status(200).json(post);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+userRouter.get("/:postId/comments", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId).populate(
+      "comment.userId",
+      "username profileImage"
+    );
+    res.status(200).json(post.comment);
   } catch (err) {
     res.status(500).json(err);
   }
