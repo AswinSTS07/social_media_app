@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import "./CommentModal.css";
 import CloseIcon from "@mui/icons-material/Close";
+import { formatDistanceToNow } from "date-fns";
 
 Modal.setAppElement("#root");
 
@@ -41,10 +42,21 @@ function CommentModal({ isOpen, onRequestClose, comments }) {
                 alt="Profile"
                 className="comment-avatar"
               />
-              <div style={{marginLeft:'20px'}}>
+              <div style={{ marginLeft: "20px" }}>
                 <span className="comment-user">{comment.username}</span>
                 <p className="comment-text">{comment.text}</p>
               </div>
+              <span
+                style={{
+                  color: "gray",
+                  fontWeight: "500",
+                  fontFamily: "sans-serif",
+                  fontSize: "12px",
+                  marginLeft: "20px",
+                }}
+              >
+                {formatDistanceToNow(new Date(comment?.createdAt))} ago
+              </span>
             </div>
           ))
         )}
