@@ -176,7 +176,6 @@ module.exports = {
         successResponse.data = users;
         resolve(successResponse);
       } else {
-        console.log(`Follow document for userId ${userId} not found.`);
         return [];
       }
     });

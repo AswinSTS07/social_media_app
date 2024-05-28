@@ -49,7 +49,7 @@ function LoginScreen() {
         if (res && res.status == 200) {
           Swal.fire({
             title: "Success!",
-            text: "Account created successfully!",
+            text: "Login successfull!",
             icon: "success",
           });
 

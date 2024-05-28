@@ -1,6 +1,10 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { BASE_URL } from "../../constant";
+import Swal from "sweetalert2";
 
 function RegisterScreen() {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -45,14 +49,29 @@ function RegisterScreen() {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Form submitted successfully");
-      // Submit the form
+      try {
+        setLoading(true);
+        const res = await axios.post(
+          `${BASE_URL}/api/v1/user/register`,
+          formData
+        );
+        setLoading(false);
+        if (res && res.status == 200) {
+          Swal.fire({
+            title: "Success!",
+            text: "Account created successfully!",
+            icon: "success",
+          });
+
+          window.location.href = "/login";
+        }
+      } catch (error) {}
     }
   };
 
@@ -135,7 +154,7 @@ function RegisterScreen() {
                 )}
               </div>
               <button type="submit" className="btn btn-primary mt-4 w-100 p-2">
-                Register
+                {loading ? <>Please wait...</> : <>Register</>}
               </button>
               <div
                 className="mt-3"
