@@ -77,7 +77,7 @@ function ProfileScreen() {
   const uploadCoverPic = async () => {
     setLoading(true);
     let res = await axios.post(
-      BASE_URL + `/api/v1/user/upload-cover-photo/6651ed15a4bdda4cea79e9e0`,
+      BASE_URL + `/api/v1/user/upload-cover-photo/${id}`,
       { src: previewSource, caption }
     );
     if (res && res.status == 200) {
@@ -262,8 +262,8 @@ function ProfileScreen() {
                         time="2 hrs ago"
                         content={p?.caption}
                         image={p?.src}
-                        avatar={user?.profileImage}
-                        name={user?.username}
+                        avatar={p?.profileImage}
+                        name={p?.username}
                       />
                     </div>
                   ))}

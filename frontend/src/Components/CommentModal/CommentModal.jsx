@@ -7,7 +7,6 @@ import { formatDistanceToNow } from "date-fns";
 Modal.setAppElement("#root");
 
 function CommentModal({ isOpen, onRequestClose, comments }) {
-  console.log("comments-----------", comments);
   return (
     <Modal
       isOpen={isOpen}

@@ -9,6 +9,7 @@ const {
   sendFollowRequest,
   unFollow,
   getFollowing,
+  getRecommendedUsers,
 } = require("../controllers/userController");
 const Post = require("../models/postModel");
 const { post } = require("../data");
@@ -65,7 +66,7 @@ const uploadImage = async (src) => {
 userRouter.post("/upload-cover-photo/:id", async (req, res) => {
   try {
     const fileStr = req.body.src;
-
+    let user = await User.findOne({ _id: req.params.id });
     const uploadResponse = await cloudinary.uploader
       .upload(fileStr, {
         upload_preset: "cloudinary_react",
@@ -79,6 +80,8 @@ userRouter.post("/upload-cover-photo/:id", async (req, res) => {
             type: "image",
             src: req.body.src,
             category: "photography",
+            profileImage: user?.profileImage,
+            username: user?.username,
           };
           await Post.create(postData);
           res.status(200).json({ message: "Cover photo uploaded" });
@@ -203,6 +206,12 @@ userRouter.get("/:postId/comments", async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
+});
+
+userRouter.get("/recommended-users/:id", async (req, res) => {
+  await getRecommendedUsers(req.params.id).then((result) => {
+    res.send(result);
+  });
 });
 
 module.exports = userRouter;

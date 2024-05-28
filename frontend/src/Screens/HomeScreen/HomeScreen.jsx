@@ -4,6 +4,7 @@ import RightCard from "../../Components/RightCard/RightCard";
 import Post from "../../Components/Post/Post";
 import axios from "axios";
 import { BASE_URL } from "../../constant";
+import { Link } from "react-router-dom";
 
 const user = {
   name: "John Doe",
@@ -13,6 +14,7 @@ const user = {
 function HomeScreen() {
   const [post, setPost] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [recommendedUsers, setRecommendedUsers] = useState([]);
 
   useEffect(() => {
     try {
@@ -24,6 +26,23 @@ function HomeScreen() {
         setLoading(false);
       };
       fetchPost();
+    } catch (error) {
+      console.log("Error while fetching post : ", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const fetchRecommendUsers = async () => {
+        setLoading(true);
+        let user = JSON.parse(localStorage.getItem("userInfo"));
+        let res = await axios.get(
+          BASE_URL + `/api/v1/user/recommended-users/${user?.id}`
+        );
+        setRecommendedUsers(res?.data?.data);
+        setLoading(false);
+      };
+      fetchRecommendUsers();
     } catch (error) {
       console.log("Error while fetching post : ", error);
     }
@@ -43,8 +62,10 @@ function HomeScreen() {
           post.map((p, index) => (
             <Post
               user={p}
+              cd
+              f
               time="2 hrs ago"
-              content="This is a sample post content. It's a beautiful day!"
+              content={p?.caption}
               image={p?.src}
               postId={p._id}
             />
@@ -56,7 +77,15 @@ function HomeScreen() {
       <div className="col-md-3">
         <h4 className="medium">Recommended for you</h4>
         <div className="container-fluid card">
-          <RightCard />
+          {recommendedUsers?.length == 0 ? (
+            <>No recommended users</>
+          ) : (
+            recommendedUsers.map((users, index) => (
+              <Link to={`/user/${users?._id}`}>
+                <RightCard data={users} />
+              </Link>
+            ))
+          )}
         </div>
       </div>
     </div>

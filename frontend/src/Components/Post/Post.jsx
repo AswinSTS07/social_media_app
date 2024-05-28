@@ -9,6 +9,7 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import axios from "axios";
 import { BASE_URL } from "../../constant";
 import CommentModal from "../CommentModal/CommentModal";
+import { formatDistanceToNow } from "date-fns";
 
 function Post({ user, time, content, image, avatar, name, postId }) {
   const [likes, setLikes] = useState(user.likes);
@@ -66,11 +67,21 @@ function Post({ user, time, content, image, avatar, name, postId }) {
     <div className="post">
       <div className="post-header">
         <div className="user-avatar">
-          <img src={user.avatar || avatar} alt={`${user.name}'s avatar`} />
+          <img
+            src={user.profileImage || avatar}
+            alt={`${user.name}'s avatar`}
+          />
         </div>
         <div className="user-info">
-          <span className="user-name">{user.name || name}</span>
-          <span className="post-time">{time}</span>
+          <a
+            href={`/user/${user?.userId}`}
+            style={{ textDecoration: "none", color: "#111" }}
+          >
+            <span className="user-name">{user?.username || name}</span>
+          </a>
+          <span className="post-time">
+            {formatDistanceToNow(new Date(user?.createdAt))} ago
+          </span>
         </div>
       </div>
       <div className="post-content">

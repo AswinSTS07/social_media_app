@@ -180,4 +180,15 @@ module.exports = {
       }
     });
   },
+  getRecommendedUsers: (id) => {
+    return new Promise(async (resolve, reject) => {
+      let user = await User.findOne({ _id: id });
+      let recommended_users = [];
+      if (user.interests.length == 0) {
+        recommended_users = await User.find({ _id: { $ne: id } });
+      }
+      successResponse.data = recommended_users;
+      resolve(successResponse);
+    });
+  },
 };
