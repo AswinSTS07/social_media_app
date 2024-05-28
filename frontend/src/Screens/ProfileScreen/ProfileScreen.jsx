@@ -260,10 +260,10 @@ function ProfileScreen() {
                       <Post
                         user={p}
                         time="2 hrs ago"
-                        content="This is a sample post content. It's a beautiful day!"
+                        content={p?.caption}
                         image={p?.src}
-                        avatar={user?.avatar}
-                        name={user?.name}
+                        avatar={user?.profileImage}
+                        name={user?.username}
                       />
                     </div>
                   ))}
