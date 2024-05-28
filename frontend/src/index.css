@@ -170,3 +170,12 @@ a{
   text-align: center;
   color: #777;
 }
+
+.liked-icon {
+  color: red;
+}
+.like-count {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #555;
+}

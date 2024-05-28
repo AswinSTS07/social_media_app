@@ -46,6 +46,7 @@ function HomeScreen() {
               time="2 hrs ago"
               content="This is a sample post content. It's a beautiful day!"
               image={p?.src}
+              postId={p._id}
             />
           ))
         ) : (

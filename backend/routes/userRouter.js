@@ -153,4 +153,36 @@ userRouter.get("/following/:id", async (req, res) => {
   });
 });
 
+userRouter.put("/:postId/like", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    console.log("req body userId : ", req.body.userId);
+    if (!post.likes.includes(req.body.userId)) {
+      post.likes.push(req.body.userId);
+    } else {
+      post.likes.pull(req.body.userId);
+    }
+    await post.save();
+    res.status(200).json(post);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+userRouter.post("/:postId/comment", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+
+    const newComment = {
+      userId: req.body.userId,
+      text: req.body.text,
+    };
+    post.comment.push(newComment);
+    await post.save();
+    res.status(200).json(post);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 module.exports = userRouter;
