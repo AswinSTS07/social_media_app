@@ -36,7 +36,7 @@ module.exports = {
       }
     });
   },
-  login: (userData) => {
+  login: (userData, response) => {
     return new Promise(async (resolve, reject) => {
       const { email, password } = userData;
 
@@ -48,9 +48,20 @@ module.exports = {
         });
 
         user.token = token;
-
-        successResponse.data = user;
-        resolve(successResponse);
+        const cookieOptions = {
+          http: true,
+          secure: true,
+        };
+        resolve(
+          response.cookie("token", token, cookieOptions).status(200).json({
+            message: "Login successfully",
+            token: token,
+            success: true,
+            data: user,
+          })
+        );
+        // successResponse.data = user;
+        // resolve(successResponse);
       }
       resolve(errorResponse);
     });

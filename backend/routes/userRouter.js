@@ -24,7 +24,7 @@ userRouter.get("/", (req, res) => {
 
 userRouter.post("/login", async (req, res) => {
   let userData = req.body;
-  await login(userData).then((result) => {
+  await login(userData, res).then((result) => {
     res.send(result);
   });
 });
